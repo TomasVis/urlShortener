@@ -4,6 +4,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser')
 
+
 var cors = require('cors');
 
 var app = express();
@@ -31,7 +32,8 @@ app.use("/name", bodyParser.urlencoded({extended: false}))
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.get('/name', function(req, res) {
-  
+  createAndSavePerson()
+  //findPeopleByName("http:kazkas")
   console.log(req.body);
   res.send({ name: req.query.first+" "+req.query.last});
   });
@@ -39,6 +41,47 @@ app.get('/name', function(req, res) {
 app.get('/', function(req, res){
   res.sendFile(process.cwd() + '/views/index.html');
 });
+//-----------------------------------
+var Schema = mongoose.Schema;
+var personSchema = new Schema({
+    name:  {type: String,
+           required:true},
+    age: Number,
+    favoriteFoods: [String],
+  });
+
+var Person = mongoose.model('Person', personSchema);
+var petras = new Person({
+    name:  "Petras",
+    age: 25,
+    favoriteFoods: ["alus", "Snapsas"]
+  });
+
+
+
+
+
+var createAndSavePerson = function(done) {
+  petras.save(function (err, data) {
+  if (err){ console.log(err)  }
+  console.log("saved succesfully");
+console.log(data)
+      done(null , data);
+});
+  
+
+
+};
+
+
+//app.get('/create-and-save-person', function(req, res) {
+//console.log(res)
+//console.log(req)
+//createAndSavePerson()
+
+//});
+
+//-----------------------------------
 
   
 // your first API endpoint... 
