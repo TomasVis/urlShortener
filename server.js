@@ -24,15 +24,11 @@ db.once('open', function() {
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
-app.use("/name", bodyParser.urlencoded({extended: false}))
+app.use( bodyParser.urlencoded({extended: false}))
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
-app.get('/name', function(req, res) {
 
-  console.log(req.body);
-  res.send({ name: req.query.first+" "+req.query.last});
-  });
 
 app.get('/', function(req, res){
   res.sendFile(process.cwd() + '/views/index.html');
@@ -48,13 +44,18 @@ var urlModel = mongoose.model('urlModel', urlSchema);
 
 var willBePutToDocumentAsUrl ="";
 var willBePutToDocumentAsNumber = "";
-var url = new urlModel({
-    originalUrl: willBePutToDocumentAsUrl,
+
+
+
+
+
+app.post("/api/shorturl/new", function(req, res) {
+	console.log(req.body.url)
+	var url = new urlModel({
+    originalUrl: req.body.url,
     shortUrl: willBePutToDocumentAsNumber
   });
-
-
-app.get('/create', function(req, res) {
+	//url.originalUrl = req.body;
   url.save(function (err, data) {
   if (err){ console.log(err)  }
   console.log("saved succesfully");
@@ -65,14 +66,11 @@ res.json({greeting: 'hello API'});
 
 });
 
-app.post('/name', function(req, res) {
-  
-  //console.log(req.body);
-  res.send({ name: req.body.first+" "+req.body.last});
-  });
 
 //-----------------------------------
+//===============================================
 
+//===============================================
   
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
