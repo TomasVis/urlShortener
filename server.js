@@ -9,7 +9,7 @@ var router = express.Router();
 const dns = require('dns');
 
 // Basic Configuration 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 80;
 
 /** this project needs a db !! **/ 
 
