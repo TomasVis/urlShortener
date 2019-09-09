@@ -13,8 +13,8 @@ var port = process.env.PORT || 80;
 
 /** this project needs a db !! **/ 
 
-//mongoose.connect("mongodb://localhost:27017/a" , {useNewUrlParser: true});
-mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/a" , {useNewUrlParser: true});
+//mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -49,7 +49,7 @@ var urlModel = mongoose.model('urlModel', urlSchema);
 app.post("/api/shorturl/new", function(req, res) {
 		findUrl(req.body.url,function(err,data){
 			if(err) { return (next(err)); }	
-			var lookup = req.body.url.replace("https://www.","").replace(/\/(.*)$/,"")
+			var lookup = req.body.url.replace("https://www.","").replace("http://www.","").replace(/\/(.*)$/,"")
 			dns.lookup(lookup, function (err, addresses, family) {	
 			console.log(lookup)	
 			//console.log("freecaodecamp.org/forum")		 
@@ -76,17 +76,47 @@ app.post("/api/shorturl/new", function(req, res) {
 	});
 			
 });
+app.post("/api/shorturl", function(req,res){
+	console.log("inside app.post")
+	console.log(!isNaN(req.body.dashorturl))
+	console.log(req.body.dashorturl)
+	if(!isNaN(req.body.dashorturl)){
+		console.log("inside if")
+		findShort(Number(req.body.dashorturl),function(err, data){
+			console.log("inside findShort")
+			if(err) { return (next(err)); }
+			if(data ==null){
+				res.send({url:"no such number"})
+			}	
+			else{
+				res.redirect(data.originalUrl);
+			}
 
+		})
+		
+	}
+	if(isNaN(req.body.dashorturl)){
+		res.send("Short url must be a number");
+	}
+	//res.send({dashorturl: req.params.dashorturl});
+  //console.log(req.params.dashorturl);
+
+})
 app.get("/api/shorturl/:dashorturl", function(req,res){
 	console.log("inside app.get")
-	console.log(!isNaN(req.params.dashorturl))
+	//console.log(!isNaN(req.params.dashorturl))
 	if(!isNaN(req.params.dashorturl)){
 		console.log("inside if")
 		findShort(Number(req.params.dashorturl),function(err, data){
-			console.log("inside findShort")
+			//console.log("inside findShort")
 			if(err) { return (next(err)); }	
 
-			res.redirect(data.originalUrl);
+			if(data ==null){
+				res.send({url:"no such number"})
+			}	
+			else{
+				res.redirect(data.originalUrl);
+			}
 
 		})
 		
