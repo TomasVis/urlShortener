@@ -34,7 +34,7 @@ app.use('/public', express.static(process.cwd() + '/public'));
 app.get('/', function(req, res){
   res.sendFile(process.cwd() + '/views/index.html');
 });
-//-----------------------------------
+
 var Schema = mongoose.Schema;
 var urlSchema = new Schema({
     originalUrl: String,
@@ -50,9 +50,7 @@ app.post("/api/shorturl/new", function(req, res) {
 		findUrl(req.body.url,function(err,data){
 			if(err) { return (next(err)); }	
 			var lookup = req.body.url.replace("https://www.","").replace("http://www.","").replace(/\/(.*)$/,"")
-			dns.lookup(lookup, function (err, addresses, family) {	
-			console.log(lookup)	
-			//console.log("freecaodecamp.org/forum")		 
+			dns.lookup(lookup, function (err, addresses, family) {			 
 		    if(data == null)  	{										// if such entry does not exist in database
 		    	if(typeof addresses != "string"){						// if not valid url
 		    		res.json({"error":"invalid URL"})				
@@ -77,11 +75,9 @@ app.post("/api/shorturl/new", function(req, res) {
 			
 });
 app.post("/api/shorturl", function(req,res){
-	console.log("inside app.post")
-	console.log(!isNaN(req.body.dashorturl))
-	console.log(req.body.dashorturl)
+
 	if(!isNaN(req.body.dashorturl)){
-		console.log("inside if")
+
 		findShort(Number(req.body.dashorturl),function(err, data){
 			console.log("inside findShort")
 			if(err) { return (next(err)); }
@@ -98,17 +94,15 @@ app.post("/api/shorturl", function(req,res){
 	if(isNaN(req.body.dashorturl)){
 		res.send("Short url must be a number");
 	}
-	//res.send({dashorturl: req.params.dashorturl});
-  //console.log(req.params.dashorturl);
+
 
 })
 app.get("/api/shorturl/:dashorturl", function(req,res){
-	console.log("inside app.get")
-	//console.log(!isNaN(req.params.dashorturl))
+
 	if(!isNaN(req.params.dashorturl)){
-		console.log("inside if")
+
 		findShort(Number(req.params.dashorturl),function(err, data){
-			//console.log("inside findShort")
+
 			if(err) { return (next(err)); }	
 
 			if(data ==null){
@@ -124,18 +118,17 @@ app.get("/api/shorturl/:dashorturl", function(req,res){
 	if(isNaN(req.params.dashorturl)){
 		res.send("Short url must be a number");
 	}
-	//res.send({dashorturl: req.params.dashorturl});
-  //console.log(req.params.dashorturl);
+
 
 })
 
 var findShort = function(thingToFind, callback) {
-console.log("inside findShort")
+
 	urlModel.findOne({shortUrl:thingToFind}, function(err, data){
 		if (err) return handleError(err);
-console.log("inside findone")
+
 			callback(null , data);
-			//console.log("ar suveikia")
+
 });
 }
 
@@ -151,7 +144,6 @@ var generateShorCode = function(callback){
 }
 
 var saveUrl = function(thingToSave, shortUrlNum, callback) {
-	//console.log("5")
 	var url = new urlModel({
 			originalUrl: thingToSave,
 			shortUrl: shortUrlNum
@@ -159,7 +151,6 @@ var saveUrl = function(thingToSave, shortUrlNum, callback) {
 	url.save(function (err, doc) {
 		if (err) return handleError(err);
 
-		console.log("6")
 			callback(null , doc);
 });
 }
@@ -172,68 +163,6 @@ var findUrl = function(thingToFind, callback) {
 			//console.log("ar suveikia")
 });
 }
-
-
-
-//-----------------------------------
-//===============================================
-//var createPerson = require('./myApp.js').createAndSavePerson;
-
-app.get('/create-and-save-person', function(req, res, next) {
-  console.log("1")
-  // in case of incorrect function use wait timeout then respond
- 
-  createAndSavePerson(function(err, data) {
-    console.log("4")
-
-    if(err) { return (next(err)); }
-    if(!data) {
-      console.log('Missing `done()` argument');
-      return next({message: 'Missing callback argument'});
-    }
-     Person.findById(data._id, function(err, pers) {
-       console.log("5")
-       if(err) { return (next(err)); }
-       res.json(pers);
-       //pers.remove();
-     });
-  });
-});
-
- var Schema = mongoose.Schema;
-var personSchema = new Schema({
-    name:  {type: String,
-           required:true},
-    age: Number,
-    favoriteFoods: [String],
-  });
-
-var Person = mongoose.model('Person', personSchema);
-var petras = new Person({
-    name:  "Petras",
-    age: 25,
-    favoriteFoods: ["alus", "Snapsas"]
-  });
-
-function handleError(err){
-  console.log("KLAIDA: "+err);
-}
-
-
-
-var createAndSavePerson = function(done) {
-  console.log("2")
-  petras.save(function (err, data) {
-  if (err) return handleError(err);
-  console.log("3");
-    //console.log(data)
-      done(null , data);
-});
-  
-
-
-};
-//===============================================
   
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
