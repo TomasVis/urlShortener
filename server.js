@@ -13,8 +13,8 @@ var port = process.env.PORT || 80;
 
 /** this project needs a db !! **/ 
 
-//mongoose.connect("mongodb://localhost:27017/a" , {useNewUrlParser: true});
-mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/a" , {useNewUrlParser: true});
+//mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -43,7 +43,10 @@ var urlSchema = new Schema({
 
 var urlModel = mongoose.model('urlModel', urlSchema);
 
-
+app.get("/api/wtf", function(req, res){
+  //console.log(req.body.username)
+  res.json({whats: "up bitches"});
+});
 
   			
 app.post("/api/shorturl/new", function(req, res) {
